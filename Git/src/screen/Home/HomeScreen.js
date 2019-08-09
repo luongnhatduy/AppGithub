@@ -110,7 +110,7 @@ class HomeScreen extends Component {
             />
           </View>
           <TouchableOpacity style={styles.btload} onPress={this.getData}>
-            <Text style={styles.txtload}>Load</Text>
+            <Text style={styles.txtload}>ok</Text>
           </TouchableOpacity>
         </View>
         {this.state.check === true && this.state.loading === false ? 
