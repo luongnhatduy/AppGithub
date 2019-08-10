@@ -1,10 +1,12 @@
 import axios from 'axios';
+import constants from '../utils/constants'
 var instance = axios.create({
-    baseURL: 'https://api.github.com',
-    timeout: 10000,
+    baseURL: constants.serverAPIURL,
+    timeout: constants.SERVER_TIMEOUT,
 })
 
 function fetch(url) {
+    console.log(url,'url')
     return instance
     .get (url)
     .then (response => {
@@ -15,9 +17,11 @@ function fetch(url) {
     });
 };
 
+
 export default apis = {
     PATH: {
-       USER:'/users'
+       USER:'/users',
+       REPO:'/repos/'
     },
     fetch
 }

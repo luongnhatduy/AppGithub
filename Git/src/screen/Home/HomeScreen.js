@@ -7,10 +7,10 @@ import {
   TextInput,
   TouchableOpacity
 } from "react-native";
-import HomeListRepos from "./HomeListRepos";
+import Flatlist from "../Component/Flatlist";
 import apis from "../../libraries/networking/apis";
 import { connect } from "react-redux";
-import { Datarepos, Page } from "../../redux/action";
+import { Datarepos, Page ,User} from "../../redux/action";
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -18,27 +18,30 @@ class HomeScreen extends Component {
       user: "",
       loading: false,
       check : false,
-      data: [],
       countallrepos:'',
-      countreposloaded:''
+      countreposloaded:'',
+      data:[]
     };
+  }
+  componentDidMount(){
+    this.props.Datarepos(this.state.data)
   }
   handleuser = txt => {
     this.setState({
       user: txt
     });
     this.props.Page(1);
+    this.props.User(txt);
   };
-  componentDidMount() {
-    this.props.Datarepos(this.state.data);
-  }
   getCountPublicRepos = () => {
     apis
       .fetch(apis.PATH.USER + "/" + this.state.user)
       .then(res => {
+        
         this.setState({
           countallrepos:res.public_repos
         })
+        console.log(res,'res')
       })
       .catch(err => {
         console.log(err, "loi");
@@ -48,6 +51,7 @@ class HomeScreen extends Component {
     apis
       .fetch( apis.PATH.USER + "/" + this.state.user +"/repos" )
       .then(res => {
+        console.log(res,'res')
         if (res.length > 0) {
           this.props.Datarepos(res);
           this.setState({
@@ -110,7 +114,7 @@ class HomeScreen extends Component {
             />
           </View>
           <TouchableOpacity style={styles.btload} onPress={this.getData}>
-            <Text style={styles.txtload}>ok</Text>
+            <Text style={styles.txtload}>Load</Text>
           </TouchableOpacity>
         </View>
         {this.state.check === true && this.state.loading === false ? 
@@ -119,7 +123,8 @@ class HomeScreen extends Component {
             <Text style={styles.txtcount}>Count repos loaded : {this.props.task.taskdatarepos.length}</Text>
           </View>
           :<View/>}
-        <HomeListRepos
+        <Flatlist
+          style={styles.flatlist}
           countallrepos={this.state.countallrepos}
           loading={this.state.loading}
           getData={this.getData}
@@ -138,7 +143,8 @@ const mapStatetoProps = state => {
 const mapDispatToProps = dispatch => {
   return {
     Datarepos: taskdatarepos => dispatch(Datarepos(taskdatarepos)),
-    Page: taskpage => dispatch(Page(taskpage))
+    Page: taskpage => dispatch(Page(taskpage)),
+    User: taskuser => dispatch(User(taskuser))
   };
 };
 export default connect(
@@ -147,7 +153,8 @@ export default connect(
 )(HomeScreen);
 const styles = StyleSheet.create({
   container: {
-    margin: 15
+    margin: 15,
+    flex:1
   },
   header: {
     flexDirection: "row",
@@ -178,5 +185,8 @@ const styles = StyleSheet.create({
   txtcount:{
     fontSize:16,
     margin:10
+  },
+  flatlist:{
+    flex:1
   }
 });
