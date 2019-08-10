@@ -5,6 +5,7 @@ import MainNavigation from "./src/routers/MainNavigation";
 import NavigationService from "./src/routers/NavigationService";
 import { createStore } from "redux";
 import allReducers from "./src/redux/reducers/index";
+import FlashMessage from "react-native-flash-message";
 
 let store = createStore(allReducers);
 
@@ -17,6 +18,7 @@ export default class App extends Component {
             NavigationService.setTopLevelNavigator(navigatorRef)
           }
         />
+        <FlashMessage position="top" />
       </Provider>
     );
   }

@@ -10,7 +10,11 @@ import {
 import Flatlist from "../Component/Flatlist";
 import apis from "../../libraries/networking/apis";
 import { connect } from "react-redux";
+import {showFlashMessage} from "../../libraries/utils/utils";
+import constants from "../../libraries/utils/constants";
 import { Datarepos, Page ,User} from "../../redux/action";
+import { showMessage } from "react-native-flash-message";
+
 class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -18,7 +22,7 @@ class HomeScreen extends Component {
       user: "",
       loading: false,
       check : false,
-      countallrepos:'',
+      countallrepos: null,
       countreposloaded:'',
       data:[]
     };
@@ -37,13 +41,24 @@ class HomeScreen extends Component {
     apis
       .fetch(apis.PATH.USER + "/" + this.state.user)
       .then(res => {
-        
-        this.setState({
-          countallrepos:res.public_repos
-        })
-        console.log(res,'res')
+        if(res.public_repos){
+          this.setState({
+            countallrepos:res.public_repos
+          })
+        }else{
+          this.setState({
+            loading: false,
+            countallrepos:'null',
+          });
+          this.props.Datarepos(this.state.data);
+
+          showFlashMessage('User is incorrect. Please try again!!!', constants.typeMessage.DANGER)
+        }   
       })
       .catch(err => {
+        this.setState({
+          loading: false
+        });
         console.log(err, "loi");
       });
   };
@@ -56,7 +71,7 @@ class HomeScreen extends Component {
           this.props.Datarepos(res);
           this.setState({
             loading: false
-          });
+          })
         }
       })
       .catch(err => {
